@@ -17,7 +17,7 @@ This project generates a monthly doctor shift schedule and exports it to Excel, 
    ```
 2. Run the scheduler:
    ```bash
-   python generate_schedule.py
+   python main.py
    ```
 3. The output Excel file (`schedule.xlsx`) will be created in the project directory.
 
