@@ -20,25 +20,24 @@ DOCTOR_DATA = {
 }
 
 THAI_HOLIDAYS = [
-    datetime.date(2024, 1, 1),
-    datetime.date(2024, 1, 2),
-    datetime.date(2024, 2, 26),
-    datetime.date(2024, 4, 8),
-    datetime.date(2024, 4, 12),
-    datetime.date(2024, 4, 15),
-    datetime.date(2024, 4, 16),
-    datetime.date(2024, 5, 1),
-    datetime.date(2024, 5, 6),
-    datetime.date(2024, 5, 22),
-    datetime.date(2024, 6, 3),
-    datetime.date(2024, 7, 22),
-    datetime.date(2024, 7, 29),
-    datetime.date(2024, 8, 12),
-    datetime.date(2024, 10, 14),
-    datetime.date(2024, 10, 23),
-    datetime.date(2024, 12, 5),
-    datetime.date(2024, 12, 10),
-    datetime.date(2024, 12, 31)
+    # June
+    datetime.date(2025, 6, 2),   # Visakha Bucha Day
+    datetime.date(2025, 6, 3),   # Queen Suthida's Birthday
+    
+    # July
+    datetime.date(2025, 7, 28),  # King Vajiralongkorn's Birthday
+    datetime.date(2025, 7, 30),  # Asalha Bucha Day
+    
+    # August
+    datetime.date(2025, 8, 12),  # The Queen's Birthday (Queen Mother's Day)
+    
+    # October
+    datetime.date(2025, 10, 13), # Anniversary of the Death of King Bhumibol
+    datetime.date(2025, 10, 23), # Chulalongkorn Day
+    
+    # December
+    datetime.date(2025, 12, 5),  # King Bhumibol's Birthday/Father's Day
+    datetime.date(2025, 12, 10), # Constitution Day
 ]
 
 def adjust_doctor_data(doctor_data):
