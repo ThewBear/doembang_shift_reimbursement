@@ -109,7 +109,7 @@ def generate_schedule(year, month, doctor_data, max_iter=100000, initial_temp=10
         new_schedule = neighbor(current_schedule)
         new_cost = cost(new_schedule)
         delta = new_cost - current_cost
-        if delta < 0 or random.random() < (2.71828 ** (-delta / temp)):
+        if delta < 0 or local_random.random() < (2.71828 ** (-delta / temp)):
             current_schedule = new_schedule
             current_cost = new_cost
             if new_cost < best_cost:
