@@ -8,10 +8,11 @@ def is_holiday(date):
     return date in THAI_HOLIDAYS
 
 def violates_constraints(schedule, doctor, date, shift_type, shift_time):
-    # No double booking in ER and ward at the same time
+    # No double booking in ER and ward at the same time, unless it's the same shift type (current shift)
     for s_type, s_time, d in schedule[date]:
-        if d == doctor:
-            if s_time == shift_time:
+        if d == doctor and s_time == shift_time:
+            # Allow if it's the current shift (same type and time)
+            if s_type != shift_type:
                 return True
     # No continuous shift between 16.30-00.30 and 00.30-08.30 of the next day
     if shift_time == "16.30-00.30":

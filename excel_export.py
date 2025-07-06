@@ -32,18 +32,24 @@ def save_schedule_to_xlsx(schedule, filename="schedule.xlsx"):
         ws.cell(row=1, column=start_col, value="Doctor")
         ws.cell(row=1, column=start_col+1, value="Weekday ER")
         ws.cell(row=1, column=start_col+2, value="Weekday ward")
-        ws.cell(row=1, column=start_col+3, value="Weekend ER")
-        ws.cell(row=1, column=start_col+4, value="Weekend ward")
+        ws.cell(row=1, column=start_col+3, value="Total Weekday")
+        ws.cell(row=1, column=start_col+4, value="Weekend ER")
+        ws.cell(row=1, column=start_col+5, value="Weekend ward")
+        ws.cell(row=1, column=start_col+6, value="Total Weekend")
         for i, doctor in enumerate(doctors):
             row_num = i + 2
             ws.cell(row=row_num, column=start_col, value=doctor)
             col_map = {col: idx+2 for idx, col in enumerate(df.columns)}
+            # Store formulas for each type for total columns
+            weekday_formula = []
+            weekend_formula = []
+            # Weekday ER
             for j, (period, shift_type) in enumerate([
-                ("weekday", "ER"), ("weekday", "ward"), ("weekend", "ER"), ("weekend", "ward")]):
+                ("weekday", "ER"), ("weekday", "ward")]):
                 count_formula = []
                 for r, date in enumerate(dates):
                     is_wkend = is_weekend(date) or is_holiday(date)
-                    if (period == "weekend" and is_wkend) or (period == "weekday" and not is_wkend):
+                    if period == "weekday" and not is_wkend:
                         for col in df.columns:
                             if col.startswith(shift_type):
                                 cell = ws.cell(row=r+2, column=col_map[col]).coordinate
@@ -53,20 +59,54 @@ def save_schedule_to_xlsx(schedule, filename="schedule.xlsx"):
                 else:
                     formula = '=0'
                 ws.cell(row=row_num, column=start_col+1+j, value=formula)
+                weekday_formula.append(f'({formula[1:]})')
+            # Total Weekday
+            if weekday_formula:
+                total_weekday_formula = f'=SUM({"+".join(weekday_formula)})'
+            else:
+                total_weekday_formula = '=0'
+            ws.cell(row=row_num, column=start_col+3, value=total_weekday_formula)
+            # Weekend ER
+            for j, (period, shift_type) in enumerate([
+                ("weekend", "ER"), ("weekend", "ward")]):
+                count_formula = []
+                for r, date in enumerate(dates):
+                    is_wkend = is_weekend(date) or is_holiday(date)
+                    if period == "weekend" and is_wkend:
+                        for col in df.columns:
+                            if col.startswith(shift_type):
+                                cell = ws.cell(row=r+2, column=col_map[col]).coordinate
+                                count_formula.append(f'--({cell}="{doctor}")')
+                if count_formula:
+                    formula = f'=SUM({" ".join(count_formula)})'
+                else:
+                    formula = '=0'
+                ws.cell(row=row_num, column=start_col+4+j, value=formula)
+                weekend_formula.append(f'({formula[1:]})')
+            # Total Weekend
+            if weekend_formula:
+                total_weekend_formula = f'=SUM({"+".join(weekend_formula)})'
+            else:
+                total_weekend_formula = '=0'
+            ws.cell(row=row_num, column=start_col+6, value=total_weekend_formula)
         expected_row = len(doctors) + 3
         ws.cell(row=expected_row-1, column=start_col, value="Expected")
         ws.cell(row=expected_row, column=start_col, value="Doctor")
         ws.cell(row=expected_row, column=start_col+1, value="Weekday ER")
         ws.cell(row=expected_row, column=start_col+2, value="Weekday ward")
-        ws.cell(row=expected_row, column=start_col+3, value="Weekend ER")
-        ws.cell(row=expected_row, column=start_col+4, value="Weekend ward")
+        ws.cell(row=expected_row, column=start_col+3, value="Total Weekday")
+        ws.cell(row=expected_row, column=start_col+4, value="Weekend ER")
+        ws.cell(row=expected_row, column=start_col+5, value="Weekend ward")
+        ws.cell(row=expected_row, column=start_col+6, value="Total Weekend")
         adjusted = adjust_doctor_data(DOCTOR_DATA)
         for i, doctor in enumerate(doctors):
             ws.cell(row=expected_row+1+i, column=start_col, value=doctor)
             ws.cell(row=expected_row+1+i, column=start_col+1, value=adjusted[doctor]["weekday"]["ER"])
             ws.cell(row=expected_row+1+i, column=start_col+2, value=adjusted[doctor]["weekday"]["ward"])
-            ws.cell(row=expected_row+1+i, column=start_col+3, value=adjusted[doctor]["weekend"]["ER"])
-            ws.cell(row=expected_row+1+i, column=start_col+4, value=adjusted[doctor]["weekend"]["ward"])
+            ws.cell(row=expected_row+1+i, column=start_col+3, value=adjusted[doctor]["weekday"]["ER"] + adjusted[doctor]["weekday"]["ward"])
+            ws.cell(row=expected_row+1+i, column=start_col+4, value=adjusted[doctor]["weekend"]["ER"])
+            ws.cell(row=expected_row+1+i, column=start_col+5, value=adjusted[doctor]["weekend"]["ward"])
+            ws.cell(row=expected_row+1+i, column=start_col+6, value=adjusted[doctor]["weekend"]["ER"] + adjusted[doctor]["weekend"]["ward"])
         from openpyxl.styles import PatternFill
         light_orange = PatternFill(start_color="FFF8CBAD", end_color="FFF8CBAD", fill_type="solid")
         light_green = PatternFill(start_color="FFD9EAD3", end_color="FFD9EAD3", fill_type="solid")
@@ -75,6 +115,6 @@ def save_schedule_to_xlsx(schedule, filename="schedule.xlsx"):
             excel_row = idx + 2
             period = ws.cell(row=excel_row, column=2).value
             fill = light_orange if period == "Weekend" else light_green
-            for col in range(1, schedule_col_count + 1):
+            for col in range(1, schedule_col_count + 2):
                 ws.cell(row=excel_row, column=col).fill = fill
     print(f"Schedule saved to {os.path.abspath(filename)}")
