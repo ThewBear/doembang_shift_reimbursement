@@ -15,11 +15,17 @@ This project generates a monthly doctor shift schedule and exports it to Excel, 
    ```bash
    pip install -r requirements.txt
    ```
-2. Run the scheduler:
+2. Generate a schedule (default, for current month/year or specify with --year and --month):
    ```bash
-   python main.py
+   python main.py --year 2025 --month 7
    ```
-3. The output Excel file (`schedule.xlsx`) will be created in the project directory.
+   The output Excel file (`schedule.xlsx`) will be created in the project directory.
+
+3. Generate a blank schedule template (for manual entry):
+   ```bash
+   python main.py blank --year 2025 --month 7
+   ```
+   The output Excel file (`blank_schedule.xlsx`) will be created in the project directory.
 
 ## Requirements
 - Python 3.8+

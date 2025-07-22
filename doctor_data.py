@@ -1,22 +1,22 @@
 import datetime
 
 DOCTOR_DATA = {
-    "Thew": {
+    "ธนัท": {
         "weekday": {"ER": 5, "ward": 4},
         "weekend": {"ER": 3, "ward": 3}
     },
-    "Oum": {
+    "กุลประวีณ์": {
         "weekday": {"ER": 4, "ward": 5},
         "weekend": {"ER": 3, "ward": 3}
     },
-    "Parn": {
+    "สุประวีณ์": {
         "weekday": {"ER": 5, "ward": 5},
         "weekend": {"ER": 2, "ward": 3}
     },
-    "Best": {
+    "กุลพักตร์": {
         "weekday": {"ER": 5, "ward": 5},
         "weekend": {"ER": 3, "ward": 2}
-    }
+    },
 }
 
 THAI_HOLIDAYS = [
@@ -29,6 +29,7 @@ THAI_HOLIDAYS = [
     datetime.date(2025, 7, 30),  # Asalha Bucha Day
     
     # August
+    datetime.date(2025, 8, 11),  # Bridge Public Holiday
     datetime.date(2025, 8, 12),  # The Queen's Birthday (Queen Mother's Day)
     
     # October
