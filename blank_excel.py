@@ -1,13 +1,10 @@
-import calendar
 import datetime
-
+import calendar
 from openpyxl.styles import PatternFill, Font
 import pandas as pd
-
 from doctor_data import DOCTOR_DATA, THAI_HOLIDAYS
 
 def generate_blank_excel(year, month, filename="blank_schedule.xlsx"):
-    """Generate a blank schedule Excel file for the given year and month."""
     days_in_month = calendar.monthrange(year, month)[1]
     dates = [datetime.date(year, month, d) for d in range(1, days_in_month+1)]
     data = []
@@ -67,27 +64,31 @@ def generate_blank_excel(year, month, filename="blank_schedule.xlsx"):
         start_row = 1
         start_col = df.shape[1]+3
 
-        # First header row: Doctor | Weekday (merged 2 cols) | Weekend (merged 2 cols)
+        # First header row: Doctor | Weekday (merged 3 cols) | Weekend (merged 3 cols) | Total (merged 1 col)
         bold_font = Font(bold=True)
         ws.cell(row=start_row, column=start_col, value="Doctor").font = bold_font
         ws.merge_cells(start_row=start_row, start_column=start_col, end_row=start_row+1, end_column=start_col)
         ws.cell(row=start_row, column=start_col+1, value="Weekday").font = bold_font
-        ws.merge_cells(start_row=start_row, start_column=start_col+1, end_row=start_row, end_column=start_col+2)
-        ws.cell(row=start_row, column=start_col+3, value="Weekend").font = bold_font
-        ws.merge_cells(start_row=start_row, start_column=start_col+3, end_row=start_row, end_column=start_col+4)
+        ws.merge_cells(start_row=start_row, start_column=start_col+1, end_row=start_row, end_column=start_col+3)
+        ws.cell(row=start_row, column=start_col+4, value="Weekend").font = bold_font
+        ws.merge_cells(start_row=start_row, start_column=start_col+4, end_row=start_row, end_column=start_col+6)
+        ws.cell(row=start_row, column=start_col+7, value="Total").font = bold_font
+        ws.merge_cells(start_row=start_row, start_column=start_col+7, end_row=start_row+1, end_column=start_col+7)
 
-        # Second header row: เวร Ward | เวร ER under each day type
+        # Second header row: เวร Ward | เวร ER | Total (Weekday) | เวร Ward | เวร ER | Total (Weekend)
         ws.cell(row=start_row+1, column=start_col+1, value="เวร Ward")
         ws.cell(row=start_row+1, column=start_col+2, value="เวร ER")
-        ws.cell(row=start_row+1, column=start_col+3, value="เวร Ward")
-        ws.cell(row=start_row+1, column=start_col+4, value="เวร ER")
+        ws.cell(row=start_row+1, column=start_col+3, value="Total")
+        ws.cell(row=start_row+1, column=start_col+4, value="เวร Ward")
+        ws.cell(row=start_row+1, column=start_col+5, value="เวร ER")
+        ws.cell(row=start_row+1, column=start_col+6, value="Total")
 
         # Precompute cell references for each (col_name, is_weekend) combination
         col_types = [
             ("เวร Ward", False, 1),
             ("เวร ER", False, 2),
-            ("เวร Ward", True, 3),
-            ("เวร ER", True, 4)
+            ("เวร Ward", True, 4),
+            ("เวร ER", True, 5)
         ]
         cell_refs = { (col_name, is_weekend): [] for (col_name, is_weekend, _) in col_types }
         for row_idx in range(2, len(data)+2):
@@ -101,16 +102,41 @@ def generate_blank_excel(year, month, filename="blank_schedule.xlsx"):
                     cell_ref = f'{col_letter}{row_idx}'
                     cell_refs[(col_name, is_weekend)].append(cell_ref)
 
-        # For each doctor, count เวร Ward/ER for weekday/weekend
+        # For each doctor, count เวร Ward/ER for weekday/weekend, and add totals
         doctor_names = list(DOCTOR_DATA.keys())
         for d_idx, doctor in enumerate(doctor_names):
             row_num = start_row+2+d_idx
             ws.cell(row=row_num, column=start_col, value=doctor)
-            for col_name, is_weekend, col_offset in col_types:
-                cells = cell_refs[(col_name, is_weekend)]
-                if cells:
-                    doctor_cell = ws.cell(row=row_num, column=start_col).coordinate
-                    ws.cell(row=row_num, column=start_col+col_offset, value=f'=SUM({', '.join([f'--({cell}={doctor_cell})' for cell in cells])})')
-                else:
-                    ws.cell(row=row_num, column=start_col+col_offset, value='=0')
+            # Weekday counts
+            weekday_ward_cells = cell_refs[("เวร Ward", False)]
+            weekday_er_cells = cell_refs[("เวร ER", False)]
+            weekend_ward_cells = cell_refs[("เวร Ward", True)]
+            weekend_er_cells = cell_refs[("เวร ER", True)]
+            doctor_cell = ws.cell(row=row_num, column=start_col).coordinate
+            # Weekday Ward
+            if weekday_ward_cells:
+                ws.cell(row=row_num, column=start_col+1, value=f'=SUM({', '.join([f'--({cell}={doctor_cell})' for cell in weekday_ward_cells])})')
+            else:
+                ws.cell(row=row_num, column=start_col+1, value='=0')
+            # Weekday ER
+            if weekday_er_cells:
+                ws.cell(row=row_num, column=start_col+2, value=f'=SUM({', '.join([f'--({cell}={doctor_cell})' for cell in weekday_er_cells])})')
+            else:
+                ws.cell(row=row_num, column=start_col+2, value='=0')
+            # Weekday Total
+            ws.cell(row=row_num, column=start_col+3, value=f'=SUM({ws.cell(row=row_num, column=start_col+1).coordinate},{ws.cell(row=row_num, column=start_col+2).coordinate})')
+            # Weekend Ward
+            if weekend_ward_cells:
+                ws.cell(row=row_num, column=start_col+4, value=f'=SUM({', '.join([f'--({cell}={doctor_cell})' for cell in weekend_ward_cells])})')
+            else:
+                ws.cell(row=row_num, column=start_col+4, value='=0')
+            # Weekend ER
+            if weekend_er_cells:
+                ws.cell(row=row_num, column=start_col+5, value=f'=SUM({', '.join([f'--({cell}={doctor_cell})' for cell in weekend_er_cells])})')
+            else:
+                ws.cell(row=row_num, column=start_col+5, value='=0')
+            # Weekend Total
+            ws.cell(row=row_num, column=start_col+6, value=f'=SUM({ws.cell(row=row_num, column=start_col+4).coordinate},{ws.cell(row=row_num, column=start_col+5).coordinate})')
+            # Grand Total
+            ws.cell(row=row_num, column=start_col+7, value=f'=SUM({ws.cell(row=row_num, column=start_col+3).coordinate},{ws.cell(row=row_num, column=start_col+6).coordinate})')
     print(f"Blank schedule saved to {filename}")
