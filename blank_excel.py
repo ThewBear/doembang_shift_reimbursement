@@ -13,14 +13,17 @@ def generate_blank_excel(year, month, filename="blank_schedule.xlsx"):
     for idx, date in enumerate(dates):
         day_of_week = date.strftime("%a")
         er_doctor = doctor_names[idx % num_doctors] if num_doctors > 0 else ""
+        is_weekend = date.weekday() >= 5
+        is_holiday = date in THAI_HOLIDAYS
+        has_opd = not is_weekend and not is_holiday
         data.append({
             "Date": date.strftime("%Y-%m-%d"),
             "Day of week": day_of_week,
             "ER": "",
             "OPD1": "",
             "OPD2": "",
-            "OPD4": "ประภาส",
-            "เรื้อรัง": "สมชาย",
+            "OPD4": "ประภาส" if has_opd else "",
+            "เรื้อรัง": "สมชาย" if has_opd else "",
             "Wardชาย/ANC": "",
             "Wardหญิง": "",
             "เวร ER": er_doctor,
@@ -75,20 +78,20 @@ def generate_blank_excel(year, month, filename="blank_schedule.xlsx"):
         ws.cell(row=start_row, column=start_col+7, value="Total").font = bold_font
         ws.merge_cells(start_row=start_row, start_column=start_col+7, end_row=start_row+1, end_column=start_col+7)
 
-        # Second header row: เวร Ward | เวร ER | Total (Weekday) | เวร Ward | เวร ER | Total (Weekend)
-        ws.cell(row=start_row+1, column=start_col+1, value="เวร Ward")
-        ws.cell(row=start_row+1, column=start_col+2, value="เวร ER")
+        # Second header row: เวร ER | เวร Ward | Total (Weekday) | เวร ER | เวร Ward | Total (Weekend)
+        ws.cell(row=start_row+1, column=start_col+1, value="เวร ER")
+        ws.cell(row=start_row+1, column=start_col+2, value="เวร Ward")
         ws.cell(row=start_row+1, column=start_col+3, value="Total")
-        ws.cell(row=start_row+1, column=start_col+4, value="เวร Ward")
-        ws.cell(row=start_row+1, column=start_col+5, value="เวร ER")
+        ws.cell(row=start_row+1, column=start_col+4, value="เวร ER")
+        ws.cell(row=start_row+1, column=start_col+5, value="เวร Ward")
         ws.cell(row=start_row+1, column=start_col+6, value="Total")
 
         # Precompute cell references for each (col_name, is_weekend) combination
         col_types = [
-            ("เวร Ward", False, 1),
-            ("เวร ER", False, 2),
-            ("เวร Ward", True, 4),
-            ("เวร ER", True, 5)
+            ("เวร ER", False, 1),
+            ("เวร Ward", False, 2),
+            ("เวร ER", True, 4),
+            ("เวร Ward", True, 5)
         ]
         cell_refs = { (col_name, is_weekend): [] for (col_name, is_weekend, _) in col_types }
         for row_idx in range(2, len(data)+2):
@@ -102,37 +105,37 @@ def generate_blank_excel(year, month, filename="blank_schedule.xlsx"):
                     cell_ref = f'{col_letter}{row_idx}'
                     cell_refs[(col_name, is_weekend)].append(cell_ref)
 
-        # For each doctor, count เวร Ward/ER for weekday/weekend, and add totals
+        # For each doctor, count เวร ER/Ward for weekday/weekend, and add totals (ER before Ward)
         doctor_names = list(DOCTOR_DATA.keys())
         for d_idx, doctor in enumerate(doctor_names):
             row_num = start_row+2+d_idx
             ws.cell(row=row_num, column=start_col, value=doctor)
             # Weekday counts
-            weekday_ward_cells = cell_refs[("เวร Ward", False)]
             weekday_er_cells = cell_refs[("เวร ER", False)]
-            weekend_ward_cells = cell_refs[("เวร Ward", True)]
+            weekday_ward_cells = cell_refs[("เวร Ward", False)]
             weekend_er_cells = cell_refs[("เวร ER", True)]
+            weekend_ward_cells = cell_refs[("เวร Ward", True)]
             doctor_cell = ws.cell(row=row_num, column=start_col).coordinate
-            # Weekday Ward
-            if weekday_ward_cells:
-                ws.cell(row=row_num, column=start_col+1, value=f'=SUM({', '.join([f'--({cell}={doctor_cell})' for cell in weekday_ward_cells])})')
-            else:
-                ws.cell(row=row_num, column=start_col+1, value='=0')
             # Weekday ER
             if weekday_er_cells:
-                ws.cell(row=row_num, column=start_col+2, value=f'=SUM({', '.join([f'--({cell}={doctor_cell})' for cell in weekday_er_cells])})')
+                ws.cell(row=row_num, column=start_col+1, value=f'=SUM({', '.join([f'--({cell}={doctor_cell})' for cell in weekday_er_cells])})')
+            else:
+                ws.cell(row=row_num, column=start_col+1, value='=0')
+            # Weekday Ward
+            if weekday_ward_cells:
+                ws.cell(row=row_num, column=start_col+2, value=f'=SUM({', '.join([f'--({cell}={doctor_cell})' for cell in weekday_ward_cells])})')
             else:
                 ws.cell(row=row_num, column=start_col+2, value='=0')
             # Weekday Total
             ws.cell(row=row_num, column=start_col+3, value=f'=SUM({ws.cell(row=row_num, column=start_col+1).coordinate},{ws.cell(row=row_num, column=start_col+2).coordinate})')
-            # Weekend Ward
-            if weekend_ward_cells:
-                ws.cell(row=row_num, column=start_col+4, value=f'=SUM({', '.join([f'--({cell}={doctor_cell})' for cell in weekend_ward_cells])})')
-            else:
-                ws.cell(row=row_num, column=start_col+4, value='=0')
             # Weekend ER
             if weekend_er_cells:
-                ws.cell(row=row_num, column=start_col+5, value=f'=SUM({', '.join([f'--({cell}={doctor_cell})' for cell in weekend_er_cells])})')
+                ws.cell(row=row_num, column=start_col+4, value=f'=SUM({', '.join([f'--({cell}={doctor_cell})' for cell in weekend_er_cells])})')
+            else:
+                ws.cell(row=row_num, column=start_col+4, value='=0')
+            # Weekend Ward
+            if weekend_ward_cells:
+                ws.cell(row=row_num, column=start_col+5, value=f'=SUM({', '.join([f'--({cell}={doctor_cell})' for cell in weekend_ward_cells])})')
             else:
                 ws.cell(row=row_num, column=start_col+5, value='=0')
             # Weekend Total
