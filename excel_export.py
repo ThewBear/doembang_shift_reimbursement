@@ -1,7 +1,22 @@
 import pandas as pd
 import os
-from doctor_data import DOCTOR_DATA, adjust_doctor_data
+from doctor_data import DOCTOR_DATA, DOCTOR_AUTOPSY_DATA, SHIFT_TIMES, adjust_doctor_data
 from constraints import is_weekend, is_holiday
+from openpyxl.styles import PatternFill, Font, Border, Side
+
+def transform_autopsy_data(autopsy_data):
+    THAI_SHIFT_TIMES = {
+        SHIFT_TIMES["NIGHT"]: "ด",
+        SHIFT_TIMES["DAY"]: "ช",
+        SHIFT_TIMES["EVENING"]: "บ",
+    }
+    transformed = {}
+    for doctor, dates in autopsy_data.items():
+        for date, shift_time in dates:
+            if date not in transformed:
+                transformed[date] = []
+            transformed[date].append(f"{THAI_SHIFT_TIMES[shift_time]}/{doctor}")
+    return transformed
 
 def save_schedule_to_xlsx(schedule, filename="schedule.xlsx"):
     all_shifts = set()
@@ -25,7 +40,20 @@ def save_schedule_to_xlsx(schedule, filename="schedule.xlsx"):
     with pd.ExcelWriter(filename, engine="openpyxl") as writer:
         df.to_excel(writer, sheet_name="Schedule")
         ws = writer.sheets["Schedule"]
-        start_col = len(df.columns) + 2
+        # write column for autopsy data
+        if DOCTOR_AUTOPSY_DATA:
+            bold_font = Font(bold=True)
+            autopsy_data = transform_autopsy_data(DOCTOR_AUTOPSY_DATA)
+            autopsy_column = len(df.columns) + 2
+            header = ws.cell(row=1, column=autopsy_column, value="Autopsy")
+            header.font = bold_font
+            header.border = Border(left=Side(style="thin"), right=Side(style="thin"),
+                                    top=Side(style="thin"), bottom=Side(style="thin"))
+            for i, date in enumerate(dates):
+                autopsy_info = autopsy_data.get(date, [])
+                ws.cell(row=i + 2, column=autopsy_column, value=", ".join(d for d in autopsy_info))
+        # write expected shifts
+        start_col = len(df.columns) + 4
         for row in range(1, len(df) + 2):
             ws.cell(row=row, column=start_col-1, value=None)
         doctors = list(DOCTOR_DATA.keys())
@@ -107,14 +135,13 @@ def save_schedule_to_xlsx(schedule, filename="schedule.xlsx"):
             ws.cell(row=expected_row+1+i, column=start_col+4, value=adjusted[doctor]["weekend"]["ER"])
             ws.cell(row=expected_row+1+i, column=start_col+5, value=adjusted[doctor]["weekend"]["ward"])
             ws.cell(row=expected_row+1+i, column=start_col+6, value=adjusted[doctor]["weekend"]["ER"] + adjusted[doctor]["weekend"]["ward"])
-        from openpyxl.styles import PatternFill
         light_orange = PatternFill(start_color="FFF8CBAD", end_color="FFF8CBAD", fill_type="solid")
         light_green = PatternFill(start_color="FFD9EAD3", end_color="FFD9EAD3", fill_type="solid")
-        schedule_col_count = len(df.columns)
         for idx, date in enumerate(dates):
             excel_row = idx + 2
             period = ws.cell(row=excel_row, column=2).value
             fill = light_orange if period == "Weekend" else light_green
-            for col in range(1, schedule_col_count + 2):
+            for col in range(1, len(df.columns) + 3):
                 ws.cell(row=excel_row, column=col).fill = fill
+                ws.cell(row=excel_row, column=col).border = None
     print(f"Schedule saved to {os.path.abspath(filename)}")

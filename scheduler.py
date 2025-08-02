@@ -2,21 +2,21 @@ import copy
 import datetime
 import random
 from collections import defaultdict
-from doctor_data import adjust_doctor_data
+from doctor_data import adjust_doctor_data, SHIFT_TIMES
 from constraints import is_weekend, is_holiday, violates_constraints
 
 WEEKDAY_SHIFTS = [
-    ("ER", "16.30-00.30"),
-    ("ER", "00.30-08.30"),
-    ("ward", "16.30-00.30")
+    ("ER", SHIFT_TIMES["EVENING"]),
+    ("ER", SHIFT_TIMES["NIGHT"]),
+    ("ward", SHIFT_TIMES["EVENING"])
 ]
 WEEKEND_SHIFTS = [
-    ("ER", "08.30-16.30"),
-    ("ER", "16.30-00.30"),
-    ("ER", "00.30-08.30"),
-    ("ward", "08.30-16.30"),
-    ("ward", "16.30-00.30"),
-    ("ward", "00.30-08.30")
+    ("ER", SHIFT_TIMES["DAY"]),
+    ("ER", SHIFT_TIMES["EVENING"]),
+    ("ER", SHIFT_TIMES["NIGHT"]),
+    ("ward", SHIFT_TIMES["DAY"]),
+    ("ward", SHIFT_TIMES["EVENING"]),
+    ("ward", SHIFT_TIMES["NIGHT"])
 ]
 
 def generate_schedule(year, month, doctor_data, max_iter=100000, initial_temp=10.0, cooling_rate=0.995):
