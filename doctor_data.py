@@ -23,6 +23,8 @@ DOCTOR_DATA = {
         "weekday": {"ER": 5, "ward": 5},
         "weekend": {"ER": 2, "ward": 4}
     },
+    "พัชรพร": {},
+    "ชาญวิทย์": {},
 }
 
 DOCTOR_AUTOPSY_DATA = {

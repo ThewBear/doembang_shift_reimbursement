@@ -21,11 +21,12 @@ def generate_blank_excel(year, month, filename="blank_schedule.xlsx"):
             "Day of week": day_of_week,
             "ER": "",
             "OPD1": "",
-            "OPD2/LR": "",
+            "OPD2": "",
+            "OPD3/LR/ANC": "",
             "OPD4": "ประภาส" if has_opd else "",
             "เรื้อรัง": "สมชาย" if has_opd else "",
             "Wardหญิง": "",
-            "Wardชาย/ANC": "",
+            "Wardชาย": "",
             "เวร ER": er_doctor,
             "เวร Ward": ""
         })
