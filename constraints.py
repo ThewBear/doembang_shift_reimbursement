@@ -20,13 +20,14 @@ def violates_constraints(schedule, doctor, date, shift_type, shift_time):
     # No more than 2 consecutive shifts for a doctor
     prev_date = date - datetime.timedelta(days=1)
     next_date = date + datetime.timedelta(days=1)
+    date_is_weekday = is_weekday(date)
     consecutive_count = 1
     if shift_time == SHIFT_TIMES["DAY"]:
         for s_type, s_time, d in schedule.get(date, []):
             if d == doctor and s_time != SHIFT_TIMES["DAY"]:
                 consecutive_count += 1
     if shift_time == SHIFT_TIMES["EVENING"]:
-        if is_weekday(date):
+        if date_is_weekday:
             consecutive_count += 1
             for s_type, s_time, d in schedule.get(date, []):
                 if d == doctor and s_time == SHIFT_TIMES["NIGHT"]:
@@ -42,7 +43,7 @@ def violates_constraints(schedule, doctor, date, shift_type, shift_time):
         for s_type, s_time, d in schedule.get(prev_date, []):
             if d == doctor and s_time == SHIFT_TIMES["EVENING"]:
                 consecutive_count += 1
-        if is_weekday(date):
+        if date_is_weekday:
             consecutive_count += 1
             for s_type, s_time, d in schedule.get(date, []):
                 if d == doctor and s_time == SHIFT_TIMES["EVENING"]:
@@ -54,9 +55,22 @@ def violates_constraints(schedule, doctor, date, shift_type, shift_time):
     if consecutive_count > 2:
         return True
         
-    # The shift date and time cannot match the autopsy data
+    # Prevent scheduling a doctor for a shift that overlaps with their autopsy assignment
     if doctor in DOCTOR_AUTOPSY_DATA:
         for autopsy_date, autopsy_time in DOCTOR_AUTOPSY_DATA[doctor]:
-            if autopsy_date == date and autopsy_time == shift_time:
-                return True
+            if autopsy_date == date:
+                if autopsy_time == shift_time:
+                    return True
+                if autopsy_time == SHIFT_TIMES["DAY"]:
+                    return True
+                if autopsy_time == SHIFT_TIMES["EVENING"] and shift_time == SHIFT_TIMES["DAY"]:
+                    return True
+                if autopsy_time == SHIFT_TIMES["NIGHT"] and shift_time == SHIFT_TIMES["DAY"]:
+                    return True
+            if autopsy_date == prev_date:
+                if autopsy_time == SHIFT_TIMES["EVENING"] and shift_time == SHIFT_TIMES["NIGHT"]:
+                    return True
+            if autopsy_date == next_date:
+                if autopsy_time == SHIFT_TIMES["NIGHT"] and shift_time == SHIFT_TIMES["EVENING"]:
+                    return True
     return False

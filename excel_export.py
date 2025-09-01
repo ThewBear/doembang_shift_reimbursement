@@ -4,6 +4,7 @@ from doctor_data import DOCTOR_DATA, DOCTOR_AUTOPSY_DATA, SHIFT_TIMES, adjust_do
 from constraints import is_weekend, is_holiday
 from openpyxl.styles import PatternFill, Font, Border, Side
 
+
 def transform_autopsy_data(autopsy_data):
     THAI_SHIFT_TIMES = {
         SHIFT_TIMES["NIGHT"]: "ด",
@@ -15,8 +16,10 @@ def transform_autopsy_data(autopsy_data):
         for date, shift_time in dates:
             if date not in transformed:
                 transformed[date] = []
-            transformed[date].append(f"{THAI_SHIFT_TIMES[shift_time]}/{doctor}")
+            transformed[date].append(
+                f"{THAI_SHIFT_TIMES[shift_time]}/{doctor}")
     return transformed
+
 
 def save_schedule_to_xlsx(schedule, filename="schedule.xlsx"):
     all_shifts = set()
@@ -48,15 +51,17 @@ def save_schedule_to_xlsx(schedule, filename="schedule.xlsx"):
             header = ws.cell(row=1, column=autopsy_column, value="Autopsy")
             header.font = bold_font
             header.border = Border(left=Side(style="thin"), right=Side(style="thin"),
-                                    top=Side(style="thin"), bottom=Side(style="thin"))
+                                   top=Side(style="thin"), bottom=Side(style="thin"))
             for i, date in enumerate(dates):
                 autopsy_info = autopsy_data.get(date, [])
-                ws.cell(row=i + 2, column=autopsy_column, value=", ".join(d for d in autopsy_info))
+                ws.cell(row=i + 2, column=autopsy_column,
+                        value=", ".join(d for d in autopsy_info))
         # write expected shifts
         start_col = len(df.columns) + 4
         for row in range(1, len(df) + 2):
             ws.cell(row=row, column=start_col-1, value=None)
-        doctors = list(DOCTOR_DATA.keys())
+        adjusted_doctor_data = adjust_doctor_data(DOCTOR_DATA)
+        doctors = list(adjusted_doctor_data.keys())
         ws.cell(row=1, column=start_col, value="Doctor")
         ws.cell(row=1, column=start_col+1, value="Weekday ER")
         ws.cell(row=1, column=start_col+2, value="Weekday ward")
@@ -73,14 +78,15 @@ def save_schedule_to_xlsx(schedule, filename="schedule.xlsx"):
             weekend_formula = []
             # Weekday ER
             for j, (period, shift_type) in enumerate([
-                ("weekday", "ER"), ("weekday", "ward")]):
+                    ("weekday", "ER"), ("weekday", "ward")]):
                 count_formula = []
                 for r, date in enumerate(dates):
                     is_wkend = is_weekend(date) or is_holiday(date)
                     if period == "weekday" and not is_wkend:
                         for col in df.columns:
                             if col.startswith(shift_type):
-                                cell = ws.cell(row=r+2, column=col_map[col]).coordinate
+                                cell = ws.cell(
+                                    row=r+2, column=col_map[col]).coordinate
                                 count_formula.append(f'--({cell}="{doctor}")')
                 if count_formula:
                     formula = f'=SUM({" ".join(count_formula)})'
@@ -93,17 +99,19 @@ def save_schedule_to_xlsx(schedule, filename="schedule.xlsx"):
                 total_weekday_formula = f'=SUM({"+".join(weekday_formula)})'
             else:
                 total_weekday_formula = '=0'
-            ws.cell(row=row_num, column=start_col+3, value=total_weekday_formula)
+            ws.cell(row=row_num, column=start_col +
+                    3, value=total_weekday_formula)
             # Weekend ER
             for j, (period, shift_type) in enumerate([
-                ("weekend", "ER"), ("weekend", "ward")]):
+                    ("weekend", "ER"), ("weekend", "ward")]):
                 count_formula = []
                 for r, date in enumerate(dates):
                     is_wkend = is_weekend(date) or is_holiday(date)
                     if period == "weekend" and is_wkend:
                         for col in df.columns:
                             if col.startswith(shift_type):
-                                cell = ws.cell(row=r+2, column=col_map[col]).coordinate
+                                cell = ws.cell(
+                                    row=r+2, column=col_map[col]).coordinate
                                 count_formula.append(f'--({cell}="{doctor}")')
                 if count_formula:
                     formula = f'=SUM({" ".join(count_formula)})'
@@ -116,7 +124,8 @@ def save_schedule_to_xlsx(schedule, filename="schedule.xlsx"):
                 total_weekend_formula = f'=SUM({"+".join(weekend_formula)})'
             else:
                 total_weekend_formula = '=0'
-            ws.cell(row=row_num, column=start_col+6, value=total_weekend_formula)
+            ws.cell(row=row_num, column=start_col +
+                    6, value=total_weekend_formula)
         expected_row = len(doctors) + 3
         ws.cell(row=expected_row-1, column=start_col, value="Expected")
         ws.cell(row=expected_row, column=start_col, value="Doctor")
@@ -126,17 +135,24 @@ def save_schedule_to_xlsx(schedule, filename="schedule.xlsx"):
         ws.cell(row=expected_row, column=start_col+4, value="Weekend ER")
         ws.cell(row=expected_row, column=start_col+5, value="Weekend ward")
         ws.cell(row=expected_row, column=start_col+6, value="Total Weekend")
-        adjusted = adjust_doctor_data(DOCTOR_DATA)
         for i, doctor in enumerate(doctors):
             ws.cell(row=expected_row+1+i, column=start_col, value=doctor)
-            ws.cell(row=expected_row+1+i, column=start_col+1, value=adjusted[doctor]["weekday"]["ER"])
-            ws.cell(row=expected_row+1+i, column=start_col+2, value=adjusted[doctor]["weekday"]["ward"])
-            ws.cell(row=expected_row+1+i, column=start_col+3, value=adjusted[doctor]["weekday"]["ER"] + adjusted[doctor]["weekday"]["ward"])
-            ws.cell(row=expected_row+1+i, column=start_col+4, value=adjusted[doctor]["weekend"]["ER"])
-            ws.cell(row=expected_row+1+i, column=start_col+5, value=adjusted[doctor]["weekend"]["ward"])
-            ws.cell(row=expected_row+1+i, column=start_col+6, value=adjusted[doctor]["weekend"]["ER"] + adjusted[doctor]["weekend"]["ward"])
-        light_orange = PatternFill(start_color="FFF8CBAD", end_color="FFF8CBAD", fill_type="solid")
-        light_green = PatternFill(start_color="FFD9EAD3", end_color="FFD9EAD3", fill_type="solid")
+            ws.cell(row=expected_row+1+i, column=start_col+1,
+                    value=adjusted_doctor_data[doctor]["weekday"]["ER"])
+            ws.cell(row=expected_row+1+i, column=start_col+2,
+                    value=adjusted_doctor_data[doctor]["weekday"]["ward"])
+            ws.cell(row=expected_row+1+i, column=start_col+3,
+                    value=adjusted_doctor_data[doctor]["weekday"]["ER"] + adjusted_doctor_data[doctor]["weekday"]["ward"])
+            ws.cell(row=expected_row+1+i, column=start_col+4,
+                    value=adjusted_doctor_data[doctor]["weekend"]["ER"])
+            ws.cell(row=expected_row+1+i, column=start_col+5,
+                    value=adjusted_doctor_data[doctor]["weekend"]["ward"])
+            ws.cell(row=expected_row+1+i, column=start_col+6,
+                    value=adjusted_doctor_data[doctor]["weekend"]["ER"] + adjusted_doctor_data[doctor]["weekend"]["ward"])
+        light_orange = PatternFill(
+            start_color="FFF8CBAD", end_color="FFF8CBAD", fill_type="solid")
+        light_green = PatternFill(
+            start_color="FFD9EAD3", end_color="FFD9EAD3", fill_type="solid")
         for idx, date in enumerate(dates):
             excel_row = idx + 2
             period = ws.cell(row=excel_row, column=2).value

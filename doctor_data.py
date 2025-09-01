@@ -8,37 +8,43 @@ SHIFT_TIMES = {
 
 DOCTOR_DATA = {
     "ธนัท": {
-        "weekday": {"ER": 5, "ward": 5},
+        "weekday": {"ER": 4, "ward": 4},
         "weekend": {"ER": 3, "ward": 2},
     },
     "กุลประวีณ์": {
-        "weekday": {"ER": 5, "ward": 5},
-        "weekend": {"ER": 3, "ward": 2}
+        "weekday": {"ER": 4, "ward": 4},
+        "weekend": {"ER": 2, "ward": 3}
     },
     "สุประวีณ์": {
-        "weekday": {"ER": 5, "ward": 5},
-        "weekend": {"ER": 3, "ward": 3}
+        "weekday": {"ER": 3, "ward": 4},
+        "weekend": {"ER": 2, "ward": 3}
     },
     "กุลพักตร์": {
-        "weekday": {"ER": 5, "ward": 5},
-        "weekend": {"ER": 2, "ward": 4}
+        "weekday": {"ER": 4, "ward": 3},
+        "weekend": {"ER": 3, "ward": 2}
     },
     "พัชรพร": {},
-    "ชาญวิทย์": {},
+    "ชาญวิทย์": {
+        "weekday": {"ER": 4, "ward": 4},
+        "weekend": {"ER": 2, "ward": 2}
+    },
 }
 
 DOCTOR_AUTOPSY_DATA = {
     "ธนัท": [],
     "กุลประวีณ์": [
-        (datetime.date(2025, 7, 11), SHIFT_TIMES["DAY"]),
-        (datetime.date(2025, 7, 16), SHIFT_TIMES["EVENING"])
+        (datetime.date(2025, 8, 10), SHIFT_TIMES["NIGHT"]),
     ],
     "สุประวีณ์": [
-        (datetime.date(2025, 7, 2), SHIFT_TIMES["EVENING"])
+        (datetime.date(2025, 8, 11), SHIFT_TIMES["DAY"]),
+        (datetime.date(2025, 8, 12), SHIFT_TIMES["EVENING"])
     ],
     "กุลพักตร์": [
-        (datetime.date(2025, 7, 25), SHIFT_TIMES["DAY"])
+        (datetime.date(2025, 8, 30), SHIFT_TIMES["DAY"])
     ],
+    "ชาญวิทย์": [
+        (datetime.date(2025, 8, 19), SHIFT_TIMES["EVENING"])
+    ]
 }
 
 THAI_HOLIDAYS = [
@@ -66,8 +72,24 @@ THAI_HOLIDAYS = [
 
 
 def adjust_doctor_data(doctor_data):
+    """
+    Adjusts doctor shift data by applying specific multipliers to ER and ward shifts.
+    For each doctor in the input dictionary:
+    - If the doctor has no shift data (empty dictionary), they are skipped.
+    - Weekday ER shifts are doubled.
+    - Weekend ER and ward shifts are tripled.
+    - Weekday ward shifts remain unchanged.
+    Args:
+        doctor_data (dict): A dictionary where each key is a doctor's name and each value is a dictionary with
+            'weekday' and 'weekend' keys, each containing 'ER' and 'ward' shift counts.
+    Returns:
+        dict: A dictionary with the same structure as the input, but with adjusted shift counts.
+    """
     adjusted = {}
     for doctor, data in doctor_data.items():
+        # Skip doctors with no shift data (empty dictionary)
+        if not data:
+            continue
         adjusted[doctor] = {
             "weekday": {
                 "ER": data["weekday"]["ER"] * 2,

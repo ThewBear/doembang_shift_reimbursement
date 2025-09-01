@@ -28,7 +28,7 @@ def main():
         return
 
     year = 2025  # Fixed year for the schedule
-    month = 7  # Fixed month for the schedule
+    month = 8  # Fixed month for the schedule
     if verify_total_shifts_against_doctor_data(year, month, DOCTOR_DATA):
         print_expected_shifts(DOCTOR_DATA)
         schedule = generate_schedule(year, month, DOCTOR_DATA)
