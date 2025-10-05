@@ -1,50 +1,49 @@
 import datetime
 
 SHIFT_TIMES = {
-    "NIGHT": "00.30-08.30",
     "DAY": "08.30-16.30",
     "EVENING": "16.30-00.30",
+    "NIGHT": "00.30-08.30",
 }
 
 DOCTOR_DATA = {
     "ธนัท": {
         "weekday": {"ER": 4, "ward": 4},
-        "weekend": {"ER": 3, "ward": 2},
+        "weekend": {"ER": 1, "ward": 1},
     },
     "กุลประวีณ์": {
-        "weekday": {"ER": 4, "ward": 4},
-        "weekend": {"ER": 2, "ward": 3}
+        "weekday": {"ER": 4, "ward": 3},
+        "weekend": {"ER": 2, "ward": 1}
     },
     "สุประวีณ์": {
-        "weekday": {"ER": 3, "ward": 4},
-        "weekend": {"ER": 2, "ward": 3}
+        "weekday": {"ER": 4, "ward": 3},
+        "weekend": {"ER": 1, "ward": 2}
     },
     "กุลพักตร์": {
-        "weekday": {"ER": 4, "ward": 3},
-        "weekend": {"ER": 3, "ward": 2}
-    },
-    "พัชรพร": {},
-    "ชาญวิทย์": {
         "weekday": {"ER": 4, "ward": 4},
-        "weekend": {"ER": 2, "ward": 2}
+        "weekend": {"ER": 1, "ward": 1}
+    },
+    "พัชรพร": {
+        "weekday": {"ER": 3, "ward": 4},
+        "weekend": {"ER": 2, "ward": 1}
+    },
+    "ชาญวิทย์": {
+        "weekday": {"ER": 3, "ward": 4},
+        "weekend": {"ER": 1, "ward": 2}
     },
 }
 
 DOCTOR_AUTOPSY_DATA = {
     "ธนัท": [],
     "กุลประวีณ์": [
-        (datetime.date(2025, 8, 10), SHIFT_TIMES["NIGHT"]),
+        (datetime.date(2025, 9, 18), SHIFT_TIMES["NIGHT"]),
     ],
     "สุประวีณ์": [
-        (datetime.date(2025, 8, 11), SHIFT_TIMES["DAY"]),
-        (datetime.date(2025, 8, 12), SHIFT_TIMES["EVENING"])
+        (datetime.date(2025, 9, 25), SHIFT_TIMES["EVENING"]),
     ],
-    "กุลพักตร์": [
-        (datetime.date(2025, 8, 30), SHIFT_TIMES["DAY"])
-    ],
-    "ชาญวิทย์": [
-        (datetime.date(2025, 8, 19), SHIFT_TIMES["EVENING"])
-    ]
+    "กุลพักตร์": [],
+    "พัชรพร": [],
+    "ชาญวิทย์": []
 }
 
 THAI_HOLIDAYS = [

@@ -20,38 +20,37 @@ def violates_constraints(schedule, doctor, date, shift_type, shift_time):
     # No more than 2 consecutive shifts for a doctor
     prev_date = date - datetime.timedelta(days=1)
     next_date = date + datetime.timedelta(days=1)
-    date_is_weekday = is_weekday(date)
     consecutive_count = 1
     if shift_time == SHIFT_TIMES["DAY"]:
+        for s_type, s_time, d in schedule.get(prev_date, []):
+            if d == doctor and s_time == SHIFT_TIMES["NIGHT"]:
+                consecutive_count += 1
         for s_type, s_time, d in schedule.get(date, []):
-            if d == doctor and s_time != SHIFT_TIMES["DAY"]:
+            if d == doctor and s_time == SHIFT_TIMES["EVENING"]:
                 consecutive_count += 1
     if shift_time == SHIFT_TIMES["EVENING"]:
-        if date_is_weekday:
+        if is_weekday(date):
             consecutive_count += 1
             for s_type, s_time, d in schedule.get(date, []):
                 if d == doctor and s_time == SHIFT_TIMES["NIGHT"]:
                     consecutive_count += 1
         else:
             for s_type, s_time, d in schedule.get(date, []):
-                if d == doctor and s_time == SHIFT_TIMES["DAY"]:
+                if d == doctor and s_time != SHIFT_TIMES["EVENING"]:
                     consecutive_count += 1
-        for s_type, s_time, d in schedule.get(next_date, []):
-            if d == doctor and s_time == SHIFT_TIMES["NIGHT"]:
-                consecutive_count += 1
     if shift_time == SHIFT_TIMES["NIGHT"]:
-        for s_type, s_time, d in schedule.get(prev_date, []):
-            if d == doctor and s_time == SHIFT_TIMES["EVENING"]:
-                consecutive_count += 1
-        if date_is_weekday:
+        if is_weekday(next_date):
             consecutive_count += 1
-            for s_type, s_time, d in schedule.get(date, []):
+            for s_type, s_time, d in schedule.get(next_date, []):
                 if d == doctor and s_time == SHIFT_TIMES["EVENING"]:
                     consecutive_count += 1
         else:
-            for s_type, s_time, d in schedule.get(date, []):
+            for s_type, s_time, d in schedule.get(next_date, []):
                 if d == doctor and s_time == SHIFT_TIMES["DAY"]:
                     consecutive_count += 1
+        for s_type, s_time, d in schedule.get(date, []):
+            if d == doctor and s_time == SHIFT_TIMES["EVENING"]:
+                consecutive_count += 1
     if consecutive_count > 2:
         return True
         

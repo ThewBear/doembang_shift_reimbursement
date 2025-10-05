@@ -7,9 +7,9 @@ from openpyxl.styles import PatternFill, Font, Border, Side
 
 def transform_autopsy_data(autopsy_data):
     THAI_SHIFT_TIMES = {
-        SHIFT_TIMES["NIGHT"]: "ด",
         SHIFT_TIMES["DAY"]: "ช",
         SHIFT_TIMES["EVENING"]: "บ",
+        SHIFT_TIMES["NIGHT"]: "ด",
     }
     transformed = {}
     for doctor, dates in autopsy_data.items():
@@ -26,7 +26,9 @@ def save_schedule_to_xlsx(schedule, filename="schedule.xlsx"):
     for date in schedule:
         for shift_type, shift_time, _ in schedule[date]:
             all_shifts.add((shift_type, shift_time))
-    all_shifts = sorted(all_shifts, key=lambda x: (x[0], x[1]))
+    # Sort shift_time according to the order in SHIFT_TIMES
+    shift_time_order = {v: i for i, v in enumerate(SHIFT_TIMES.values())}
+    all_shifts = sorted(all_shifts, key=lambda x: (x[0], shift_time_order.get(x[1], 999)))
     data = []
     dates = sorted(schedule.keys())
     for date in dates:
