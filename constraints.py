@@ -47,7 +47,7 @@ def violates_constraints(schedule, doctor, date, shift_type, shift_time):
         else:
             for s_type, s_time, d in schedule.get(next_date, []):
                 if d == doctor and s_time == SHIFT_TIMES["DAY"]:
-                    consecutive_count += 1
+                    consecutive_count += 1000  # Large number to ensure violation
         for s_type, s_time, d in schedule.get(date, []):
             if d == doctor and s_time == SHIFT_TIMES["EVENING"]:
                 consecutive_count += 1

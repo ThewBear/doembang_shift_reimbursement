@@ -2,17 +2,16 @@ import datetime
 import calendar
 from openpyxl.styles import PatternFill, Font
 import pandas as pd
-from doctor_data import DOCTOR_DATA, THAI_HOLIDAYS
+from doctor_data import BLANK_DOCTOR_LIST, THAI_HOLIDAYS
 
 def generate_blank_excel(year, month, filename="blank_schedule.xlsx"):
     days_in_month = calendar.monthrange(year, month)[1]
     dates = [datetime.date(year, month, d) for d in range(1, days_in_month+1)]
     data = []
-    doctor_names = list(DOCTOR_DATA.keys())
-    num_doctors = len(doctor_names)
+    num_doctors = len(BLANK_DOCTOR_LIST)
     for idx, date in enumerate(dates):
         day_of_week = date.strftime("%a")
-        er_doctor = doctor_names[idx % num_doctors] if num_doctors > 0 else ""
+        er_doctor = BLANK_DOCTOR_LIST[idx % num_doctors] if num_doctors > 0 else ""
         is_weekend = date.weekday() >= 5
         is_holiday = date in THAI_HOLIDAYS
         has_opd = not is_weekend and not is_holiday
@@ -107,8 +106,7 @@ def generate_blank_excel(year, month, filename="blank_schedule.xlsx"):
                     cell_refs[(col_name, is_weekend)].append(cell_ref)
 
         # For each doctor, count เวร ER/Ward for weekday/weekend, and add totals (ER before Ward)
-        doctor_names = list(DOCTOR_DATA.keys())
-        for d_idx, doctor in enumerate(doctor_names):
+        for d_idx, doctor in enumerate(BLANK_DOCTOR_LIST):
             row_num = start_row+2+d_idx
             ws.cell(row=row_num, column=start_col, value=doctor)
             # Weekday counts
