@@ -88,8 +88,8 @@ THAI_HOLIDAYS = [
     datetime.date(2025, 12, 31),  # New Year's Eve
     
     # January
-    datetime.date(2025, 1, 1),   # New Year's Day
-    datetime.date(2025, 1, 2),  # Extra New Year Holiday
+    datetime.date(2026, 1, 1),   # New Year's Day
+    datetime.date(2026, 1, 2),  # Extra New Year Holiday
 ]
 
 
