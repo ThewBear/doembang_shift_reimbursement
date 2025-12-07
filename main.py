@@ -2,12 +2,12 @@ import datetime
 import argparse
 from doctor_data import DOCTOR_DATA
 from scheduler import (
-    generate_schedule,
     print_expected_shifts,
     print_schedule_summary,
     verify_schedule,
     verify_total_shifts_against_doctor_data
 )
+from schedule_ortools import generate_schedule
 from excel_export import save_schedule_to_xlsx
 from blank_excel import generate_blank_excel
 
@@ -28,7 +28,7 @@ def main():
         return
 
     year = 2025  # Fixed year for the schedule
-    month = 10  # Fixed month for the schedule
+    month = 11  # Fixed month for the schedule
     if verify_total_shifts_against_doctor_data(year, month, DOCTOR_DATA):
         print_expected_shifts(DOCTOR_DATA)
         schedule = generate_schedule(year, month, DOCTOR_DATA)
