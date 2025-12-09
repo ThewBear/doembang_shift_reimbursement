@@ -148,6 +148,28 @@ def generate_schedule_ortools(year, month, doctor_data, time_limit_seconds=300):
                     
                     if prev_night_vars:
                         model.Add(sum(prev_night_vars) + sum(curr_evening_vars) <= 1)
+                
+                # Prevent: Evening (prev day) + Night (prev day) + Day (implicit current day)
+                # If worked both evening AND night on previous day, that's already 2 consecutive shifts
+                # So cannot have the implicit day shift on current weekday
+                if prev_date >= days[0]:
+                    prev_evening_vars = []
+                    prev_night_vars = []
+                    
+                    if (prev_date, "ER", SHIFT_TIMES["EVENING"], doctor) in shifts:
+                        prev_evening_vars.append(shifts[(prev_date, "ER", SHIFT_TIMES["EVENING"], doctor)])
+                    if (prev_date, "ward", SHIFT_TIMES["EVENING"], doctor) in shifts:
+                        prev_evening_vars.append(shifts[(prev_date, "ward", SHIFT_TIMES["EVENING"], doctor)])
+                    
+                    if (prev_date, "ER", SHIFT_TIMES["NIGHT"], doctor) in shifts:
+                        prev_night_vars.append(shifts[(prev_date, "ER", SHIFT_TIMES["NIGHT"], doctor)])
+                    if (prev_date, "ward", SHIFT_TIMES["NIGHT"], doctor) in shifts:
+                        prev_night_vars.append(shifts[(prev_date, "ward", SHIFT_TIMES["NIGHT"], doctor)])
+                    
+                    # If worked both evening and night on prev day, prevent having current weekday
+                    # Since we can't directly forbid "having a weekday", we forbid working evening AND night together on prev day when current is weekday
+                    if prev_evening_vars and prev_night_vars:
+                        model.Add(sum(prev_evening_vars) + sum(prev_night_vars) <= 1)
             else:
                 # Weekend: Check Day -> Evening -> Night
                 curr_day_vars = []
