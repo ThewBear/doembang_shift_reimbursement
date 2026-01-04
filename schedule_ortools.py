@@ -1,7 +1,7 @@
 import datetime
 from collections import defaultdict
 from ortools.sat.python import cp_model
-from doctor_data import adjust_doctor_data, SHIFT_TIMES, DOCTOR_AUTOPSY_DATA
+from doctor_data import adjust_doctor_data, SHIFT_TIMES, DOCTOR_AUTOPSY_DATA, DOCTOR_NEWYEAREVE_DATA, DOCTOR_NEWYEAR_DATA
 from constraints import is_weekend, is_holiday, violates_constraints
 
 WEEKDAY_SHIFTS = [
@@ -240,6 +240,39 @@ def generate_schedule_ortools(year, month, doctor_data, time_limit_seconds=300):
                     for shift_type in ["ER", "ward"]:
                         if (next_date, shift_type, SHIFT_TIMES["DAY"], doctor) in shifts:
                             model.Add(shifts[(next_date, shift_type, SHIFT_TIMES["DAY"], doctor)] == 0)
+    
+    # Constraint 6: New Year Eve shifts - doctors with assigned NYE shifts must work that many shifts on Night Dec 30 and All Dec 31
+    nye_date1 = datetime.date(year, 12, 30)
+    nye_date2 = datetime.date(year, 12, 31)
+    for doctor in doctors:
+        if doctor in DOCTOR_NEWYEAREVE_DATA:
+            required_nye_shifts = DOCTOR_NEWYEAREVE_DATA[doctor]
+            nye_shift_vars = []
+            # Night shift on Dec 30
+            for shift_type in ["ER", "ward"]:
+                if (nye_date1, shift_type, SHIFT_TIMES["NIGHT"], doctor) in shifts:
+                    nye_shift_vars.append(shifts[(nye_date1, shift_type, SHIFT_TIMES["NIGHT"], doctor)])
+            # All shifts on Dec 31
+            for shift_type, shift_time in WEEKEND_SHIFTS:
+                if (nye_date2, shift_type, shift_time, doctor) in shifts:
+                    nye_shift_vars.append(shifts[(nye_date2, shift_type, shift_time, doctor)])
+            if nye_shift_vars:
+                model.Add(sum(nye_shift_vars) == required_nye_shifts)
+                
+    # constraint 7: New Year Day shifts - doctors with assigned NY shifts must work that many shifts on Jan 1-4
+    ny_dates = [datetime.date(year + 1, 1, d) for d in range(1, 5)]
+    for doctor in doctors:
+        if doctor in DOCTOR_NEWYEAR_DATA:
+            required_ny_shifts = DOCTOR_NEWYEAR_DATA[doctor]
+            ny_shift_vars = []
+            for ny_date in ny_dates:
+                is_wkend = is_weekend(ny_date) or is_holiday(ny_date)
+                shifts_list = WEEKEND_SHIFTS if is_wkend else WEEKDAY_SHIFTS
+                for shift_type, shift_time in shifts_list:
+                    if (ny_date, shift_type, shift_time, doctor) in shifts:
+                        ny_shift_vars.append(shifts[(ny_date, shift_type, shift_time, doctor)])
+            if ny_shift_vars:
+                model.Add(sum(ny_shift_vars) == required_ny_shifts)
     
     # Soft constraints: Minimize consecutive shifts with same time on consecutive days
     penalty_vars = []
