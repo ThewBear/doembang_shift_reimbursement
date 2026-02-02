@@ -260,7 +260,7 @@ def generate_schedule_ortools(year, month, doctor_data, time_limit_seconds=300):
                 model.Add(sum(nye_shift_vars) == required_nye_shifts)
                 
     # constraint 7: New Year Day shifts - doctors with assigned NY shifts must work that many shifts on Jan 1-4
-    ny_dates = [datetime.date(year + 1, 1, d) for d in range(1, 5)]
+    ny_dates = [datetime.date(2026, 1, d) for d in range(1, 5)]
     for doctor in doctors:
         if doctor in DOCTOR_NEWYEAR_DATA:
             required_ny_shifts = DOCTOR_NEWYEAR_DATA[doctor]

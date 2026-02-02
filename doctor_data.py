@@ -17,28 +17,28 @@ BLANK_DOCTOR_LIST = [
 
 DOCTOR_DATA = {
     "ธนัท": {
-        "weekday": {"ER": 4, "ward": 3},
-        "weekend": {"ER": 2, "ward": 2},
+        "weekday": {"ER": 3, "ward": 4},
+        "weekend": {"ER": 2, "ward": 1},
     },
     "กุลประวีณ์": {
-        "weekday": {"ER": 3, "ward": 3},
+        "weekday": {"ER": 3, "ward": 4},
         "weekend": {"ER": 2, "ward": 2}
     },
     "สุประวีณ์": {
         "weekday": {"ER": 4, "ward": 3},
-        "weekend": {"ER": 1, "ward": 2}
+        "weekend": {"ER": 1, "ward": 3}
     },
     "กุลพักตร์": {
-        "weekday": {"ER": 2, "ward": 4},
-        "weekend": {"ER": 2, "ward": 2}
+        "weekday": {"ER": 4, "ward": 3},
+        "weekend": {"ER": 2, "ward": 1}
     },
     "พัชรพร": {
-        "weekday": {"ER": 4, "ward": 4},
-        "weekend": {"ER": 1, "ward": 2}
+        "weekday": {"ER": 3, "ward": 3},
+        "weekend": {"ER": 2, "ward": 2}
     },
     "กรภัทร์": {
         "weekday": {"ER": 3, "ward": 3},
-        "weekend": {"ER": 3, "ward": 1}
+        "weekend": {"ER": 2, "ward": 2}
     },
 }
 
@@ -62,18 +62,18 @@ DOCTOR_NEWYEAR_DATA = {
 
 DOCTOR_AUTOPSY_DATA = {
     "ธนัท": [
-        (datetime.date(2025, 12, 12), SHIFT_TIMES["NIGHT"]),
+        (datetime.date(2026, 1, 23), SHIFT_TIMES["EVENING"]),
     ],
     "กุลประวีณ์": [
+        (datetime.date(2026, 1, 7), SHIFT_TIMES["EVENING"]),
     ],
     "สุประวีณ์": [
-        (datetime.date(2025, 12, 5), SHIFT_TIMES["EVENING"]),
     ],
     "กุลพักตร์": [
-        (datetime.date(2025, 12, 18), SHIFT_TIMES["EVENING"]),
     ],
     "พัชรพร": [
-        (datetime.date(2025, 12, 25), SHIFT_TIMES["DAY"]),
+        (datetime.date(2026, 1, 12), SHIFT_TIMES["NIGHT"]),
+        (datetime.date(2026, 1, 28), SHIFT_TIMES["EVENING"]),
     ],
     "กรภัทร์": []
 }
@@ -87,6 +87,19 @@ THAI_HOLIDAYS = [
     # January
     datetime.date(2026, 1, 1),   # New Year's Day
     datetime.date(2026, 1, 2),  # Extra New Year Holiday
+    
+    # --- March 2026 ---
+    datetime.date(2026, 3, 3),   # Makha Bucha Day
+
+    # --- April 2026 ---
+    datetime.date(2026, 4, 6),   # Chakri Memorial Day
+    datetime.date(2026, 4, 13),  # Songkran Festival
+    datetime.date(2026, 4, 14),  # Songkran Festival
+    datetime.date(2026, 4, 15),  # Songkran Festival
+
+    # --- May 2026 ---
+    datetime.date(2026, 5, 4),   # Coronation Day
+    datetime.date(2026, 5, 31),  # Visakha Bucha Day
 ]
 
 

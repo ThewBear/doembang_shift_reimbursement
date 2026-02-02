@@ -23,7 +23,7 @@ This project generates a monthly doctor shift schedule and exports it to Excel, 
 
 3. Generate a blank schedule template (for manual entry):
    ```bash
-   python main.py blank --year 2025 --month 7
+   python main.py blank --year 2026 --month 2
    ```
    The output Excel file (`blank_schedule.xlsx`) will be created in the project directory.
 
