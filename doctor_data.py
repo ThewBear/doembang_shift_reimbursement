@@ -62,12 +62,15 @@ DOCTOR_NEWYEAR_DATA = {
 
 DOCTOR_AUTOPSY_DATA = {
     "ธนัท": [
+        (datetime.date(2026, 1, 4), SHIFT_TIMES["DAY"]),
         (datetime.date(2026, 1, 23), SHIFT_TIMES["EVENING"]),
     ],
     "กุลประวีณ์": [
         (datetime.date(2026, 1, 7), SHIFT_TIMES["EVENING"]),
     ],
     "สุประวีณ์": [
+        (datetime.date(2026, 1, 19), SHIFT_TIMES["EVENING"]),
+        (datetime.date(2026, 1, 31), SHIFT_TIMES["EVENING"]),
     ],
     "กุลพักตร์": [
     ],
@@ -99,7 +102,7 @@ THAI_HOLIDAYS = [
 
     # --- May 2026 ---
     datetime.date(2026, 5, 4),   # Coronation Day
-    datetime.date(2026, 5, 31),  # Visakha Bucha Day
+    # datetime.date(2026, 5, 31),  # Visakha Bucha Day
 ]
 
 
