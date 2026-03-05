@@ -12,73 +12,53 @@ BLANK_DOCTOR_LIST = [
     "สุประวีณ์",
     "กุลพักตร์",
     "พัชรพร",
-    "กรภัทร์"
+    "ภณิตา"
 ]
 
 DOCTOR_DATA = {
     "ธนัท": {
-        "weekday": {"ER": 3, "ward": 4},
-        "weekend": {"ER": 2, "ward": 1},
+        "weekday": {"ER": 3, "ward": 3},
+        "weekend": {"ER": 1, "ward": 2},
     },
     "กุลประวีณ์": {
         "weekday": {"ER": 3, "ward": 4},
-        "weekend": {"ER": 2, "ward": 2}
+        "weekend": {"ER": 1, "ward": 1}
     },
     "สุประวีณ์": {
         "weekday": {"ER": 4, "ward": 3},
-        "weekend": {"ER": 1, "ward": 3}
+        "weekend": {"ER": 1, "ward": 1}
     },
     "กุลพักตร์": {
-        "weekday": {"ER": 4, "ward": 3},
+        "weekday": {"ER": 3, "ward": 4},
         "weekend": {"ER": 2, "ward": 1}
     },
     "พัชรพร": {
-        "weekday": {"ER": 3, "ward": 3},
-        "weekend": {"ER": 2, "ward": 2}
+        "weekday": {"ER": 4, "ward": 3},
+        "weekend": {"ER": 2, "ward": 1}
     },
-    "กรภัทร์": {
+    "ภณิตา": {
         "weekday": {"ER": 3, "ward": 3},
-        "weekend": {"ER": 2, "ward": 2}
+        "weekend": {"ER": 1, "ward": 2}
     },
-}
-
-DOCTOR_NEWYEAREVE_DATA = {
-    "ธนัท": 2,
-    "กุลประวีณ์": 2,
-    "สุประวีณ์": 2,
-    "กุลพักตร์": 0,
-    "พัชรพร": 0,
-    "กรภัทร์": 1,
-}
-
-DOCTOR_NEWYEAR_DATA = {
-    "ธนัท": 7-DOCTOR_NEWYEAREVE_DATA["ธนัท"],
-    "กุลประวีณ์": 6-DOCTOR_NEWYEAREVE_DATA["กุลประวีณ์"],
-    "สุประวีณ์": 6-DOCTOR_NEWYEAREVE_DATA["สุประวีณ์"],
-    "กุลพักตร์": 3-DOCTOR_NEWYEAREVE_DATA["กุลพักตร์"],
-    "พัชรพร": 3-DOCTOR_NEWYEAREVE_DATA["พัชรพร"],
-    "กรภัทร์": 6-DOCTOR_NEWYEAREVE_DATA["กรภัทร์"],
 }
 
 DOCTOR_AUTOPSY_DATA = {
     "ธนัท": [
-        (datetime.date(2026, 1, 4), SHIFT_TIMES["DAY"]),
-        (datetime.date(2026, 1, 23), SHIFT_TIMES["EVENING"]),
+        (datetime.date(2026, 2, 15), SHIFT_TIMES["DAY"]),
     ],
     "กุลประวีณ์": [
-        (datetime.date(2026, 1, 7), SHIFT_TIMES["EVENING"]),
     ],
     "สุประวีณ์": [
-        (datetime.date(2026, 1, 19), SHIFT_TIMES["EVENING"]),
-        (datetime.date(2026, 1, 31), SHIFT_TIMES["EVENING"]),
     ],
     "กุลพักตร์": [
+        (datetime.date(2026, 2, 13), SHIFT_TIMES["DAY"]),
+        (datetime.date(2026, 2, 22), SHIFT_TIMES["DAY"]),
     ],
     "พัชรพร": [
-        (datetime.date(2026, 1, 12), SHIFT_TIMES["NIGHT"]),
-        (datetime.date(2026, 1, 28), SHIFT_TIMES["EVENING"]),
     ],
-    "กรภัทร์": []
+    "ภณิตา": [
+        (datetime.date(2026, 2, 2), SHIFT_TIMES["DAY"]),
+    ]
 }
 
 THAI_HOLIDAYS = [
@@ -86,11 +66,11 @@ THAI_HOLIDAYS = [
     datetime.date(2025, 12, 5),  # King Bhumibol's Birthday/Father's Day
     datetime.date(2025, 12, 10),  # Constitution Day
     datetime.date(2025, 12, 31),  # New Year's Eve
-    
+
     # January
     datetime.date(2026, 1, 1),   # New Year's Day
     datetime.date(2026, 1, 2),  # Extra New Year Holiday
-    
+
     # --- March 2026 ---
     datetime.date(2026, 3, 3),   # Makha Bucha Day
 
