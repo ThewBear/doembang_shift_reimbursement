@@ -17,47 +17,48 @@ BLANK_DOCTOR_LIST = [
 
 DOCTOR_DATA = {
     "ธนัท": {
-        "weekday": {"ER": 3, "ward": 3},
-        "weekend": {"ER": 1, "ward": 2},
+        "weekday": {"ER": 4, "ward": 4},
+        "weekend": {"ER": 2, "ward": 1},
     },
     "กุลประวีณ์": {
-        "weekday": {"ER": 3, "ward": 4},
-        "weekend": {"ER": 1, "ward": 1}
+        "weekday": {"ER": 3, "ward": 3},
+        "weekend": {"ER": 2, "ward": 2}
     },
     "สุประวีณ์": {
         "weekday": {"ER": 4, "ward": 3},
-        "weekend": {"ER": 1, "ward": 1}
+        "weekend": {"ER": 1, "ward": 2}
     },
     "กุลพักตร์": {
-        "weekday": {"ER": 3, "ward": 4},
-        "weekend": {"ER": 2, "ward": 1}
-    },
-    "พัชรพร": {
         "weekday": {"ER": 4, "ward": 3},
         "weekend": {"ER": 2, "ward": 1}
     },
+    "พัชรพร": {
+        "weekday": {"ER": 3, "ward": 4},
+        "weekend": {"ER": 2, "ward": 2}
+    },
     "ภณิตา": {
-        "weekday": {"ER": 3, "ward": 3},
+        "weekday": {"ER": 3, "ward": 4},
         "weekend": {"ER": 1, "ward": 2}
     },
 }
 
 DOCTOR_AUTOPSY_DATA = {
     "ธนัท": [
-        (datetime.date(2026, 2, 15), SHIFT_TIMES["DAY"]),
+        (datetime.date(2026, 3, 7), SHIFT_TIMES["DAY"]),
+        (datetime.date(2026, 3, 15), SHIFT_TIMES["EVENING"]),
     ],
     "กุลประวีณ์": [
     ],
     "สุประวีณ์": [
     ],
     "กุลพักตร์": [
-        (datetime.date(2026, 2, 13), SHIFT_TIMES["DAY"]),
-        (datetime.date(2026, 2, 22), SHIFT_TIMES["DAY"]),
+        (datetime.date(2026, 3, 3), SHIFT_TIMES["EVENING"]),
+        (datetime.date(2026, 3, 18), SHIFT_TIMES["NIGHT"]),
     ],
     "พัชรพร": [
+        (datetime.date(2026, 3, 23), SHIFT_TIMES["EVENING"]),
     ],
     "ภณิตา": [
-        (datetime.date(2026, 2, 2), SHIFT_TIMES["DAY"]),
     ]
 }
 
