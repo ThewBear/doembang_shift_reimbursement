@@ -17,48 +17,52 @@ BLANK_DOCTOR_LIST = [
 
 DOCTOR_DATA = {
     "ธนัท": {
-        "weekday": {"ER": 4, "ward": 4},
-        "weekend": {"ER": 2, "ward": 1},
+        "weekday": {"ER": 3, "ward": 3},
+        "weekend": {"ER": 2, "ward": 2},
     },
     "กุลประวีณ์": {
         "weekday": {"ER": 3, "ward": 3},
         "weekend": {"ER": 2, "ward": 2}
     },
     "สุประวีณ์": {
-        "weekday": {"ER": 4, "ward": 3},
-        "weekend": {"ER": 1, "ward": 2}
+        "weekday": {"ER": 3, "ward": 3},
+        "weekend": {"ER": 2, "ward": 2},
     },
     "กุลพักตร์": {
-        "weekday": {"ER": 4, "ward": 3},
-        "weekend": {"ER": 2, "ward": 1}
+        "weekday": {"ER": 3, "ward": 3},
+        "weekend": {"ER": 2, "ward": 2},
     },
     "พัชรพร": {
-        "weekday": {"ER": 3, "ward": 4},
-        "weekend": {"ER": 2, "ward": 2}
+        "weekday": {"ER": 3, "ward": 3},
+        "weekend": {"ER": 2, "ward": 2},
     },
-    "ภณิตา": {
-        "weekday": {"ER": 3, "ward": 4},
-        "weekend": {"ER": 1, "ward": 2}
+    "ฤชุกร": {
+        "weekday": {"ER": 3, "ward": 3},
+        "weekend": {"ER": 2, "ward": 2},
     },
 }
 
 DOCTOR_AUTOPSY_DATA = {
     "ธนัท": [
-        (datetime.date(2026, 3, 7), SHIFT_TIMES["DAY"]),
-        (datetime.date(2026, 3, 15), SHIFT_TIMES["EVENING"]),
+        (datetime.date(2026, 4, 17), SHIFT_TIMES["EVENING"]),
     ],
     "กุลประวีณ์": [
+        (datetime.date(2026, 4, 3), SHIFT_TIMES["EVENING"]),
+        (datetime.date(2026, 4, 22), SHIFT_TIMES["NIGHT"]),
+        (datetime.date(2026, 4, 24), SHIFT_TIMES["DAY"]),
     ],
     "สุประวีณ์": [
+        (datetime.date(2026, 4, 9), SHIFT_TIMES["EVENING"]),
+        (datetime.date(2026, 4, 13), SHIFT_TIMES["NIGHT"]),
     ],
     "กุลพักตร์": [
-        (datetime.date(2026, 3, 3), SHIFT_TIMES["EVENING"]),
-        (datetime.date(2026, 3, 18), SHIFT_TIMES["NIGHT"]),
     ],
     "พัชรพร": [
-        (datetime.date(2026, 3, 23), SHIFT_TIMES["EVENING"]),
+        (datetime.date(2026, 4, 8), SHIFT_TIMES["DAY"]),
+        (datetime.date(2026, 4, 28), SHIFT_TIMES["DAY"]),
     ],
-    "ภณิตา": [
+    "ฤชุกร": [
+        (datetime.date(2026, 4, 28), SHIFT_TIMES["EVENING"]),
     ]
 }
 

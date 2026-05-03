@@ -225,22 +225,53 @@ def generate_schedule_ortools(year, month, doctor_data, time_limit_seconds=300):
                         if (autopsy_date, shift_type, SHIFT_TIMES["EVENING"], doctor) in shifts:
                             model.Add(shifts[(autopsy_date, shift_type, SHIFT_TIMES["EVENING"], doctor)] == 0)
                 
-                # Cross-day conflicts
-                prev_date = autopsy_date - datetime.timedelta(days=1)
-                next_date = autopsy_date + datetime.timedelta(days=1)
+                # # Cross-day conflicts
+                # prev_date = autopsy_date - datetime.timedelta(days=1)
+                # next_date = autopsy_date + datetime.timedelta(days=1)
                 
-                # If autopsy DAY on day D, cannot work NIGHT on day D-1
-                if autopsy_time == SHIFT_TIMES["DAY"] and prev_date >= days[0]:
-                    for shift_type in ["ER", "ward"]:
-                        if (prev_date, shift_type, SHIFT_TIMES["NIGHT"], doctor) in shifts:
-                            model.Add(shifts[(prev_date, shift_type, SHIFT_TIMES["NIGHT"], doctor)] == 0)
+                # # If autopsy DAY on day D, cannot work NIGHT on day D-1
+                # if autopsy_time == SHIFT_TIMES["DAY"] and prev_date >= days[0]:
+                #     for shift_type in ["ER", "ward"]:
+                #         if (prev_date, shift_type, SHIFT_TIMES["NIGHT"], doctor) in shifts:
+                #             model.Add(shifts[(prev_date, shift_type, SHIFT_TIMES["NIGHT"], doctor)] == 0)
                 
-                # If autopsy NIGHT on day D, cannot work DAY on day D+1
-                if autopsy_time == SHIFT_TIMES["NIGHT"] and next_date <= days[-1]:
-                    for shift_type in ["ER", "ward"]:
-                        if (next_date, shift_type, SHIFT_TIMES["DAY"], doctor) in shifts:
-                            model.Add(shifts[(next_date, shift_type, SHIFT_TIMES["DAY"], doctor)] == 0)
+                # # If autopsy NIGHT on day D, cannot work DAY on day D+1
+                # if autopsy_time == SHIFT_TIMES["NIGHT"] and next_date <= days[-1]:
+                #     for shift_type in ["ER", "ward"]:
+                #         if (next_date, shift_type, SHIFT_TIMES["DAY"], doctor) in shifts:
+                #             model.Add(shifts[(next_date, shift_type, SHIFT_TIMES["DAY"], doctor)] == 0)
     
+    # SONGKRAN_SHIFTS
+    SONGKRAN_SHIFTS = {
+        "ธนัท": 6,
+        "กุลประวีณ์": 0,
+        "สุประวีณ์": 4,
+        "กุลพักตร์": 4,
+        "พัชรพร": 6,
+        "ภณิตา": 0,
+    }
+    # Constraint 6: Songkran period shifts (NIGHT of 12th through NIGHT of 15th)
+    # Each doctor must work exactly their SONGKRAN_SHIFTS count during this period.
+    # Only enforced when scheduling April.
+    if month == 4:
+        songkran_start = datetime.date(year, 4, 12)
+        songkran_end = datetime.date(year, 4, 15)
+        for doctor in doctors:
+            required = SONGKRAN_SHIFTS.get(doctor, 0)
+            if required == 0:
+                continue
+            songkran_shift_vars = []
+            for date, shift_type, shift_time, key in all_shifts:
+                if date < songkran_start or date > songkran_end:
+                    continue
+                # April 12: only NIGHT shift counts
+                if date == songkran_start and shift_time != SHIFT_TIMES["NIGHT"]:
+                    continue
+                if (date, shift_type, shift_time, doctor) in shifts:
+                    songkran_shift_vars.append(shifts[(date, shift_type, shift_time, doctor)])
+            if songkran_shift_vars:
+                model.Add(sum(songkran_shift_vars) == required)
+
     # Soft constraints: Minimize consecutive shifts with same time on consecutive days
     penalty_vars = []
     for doctor in doctors:
