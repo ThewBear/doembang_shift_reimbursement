@@ -12,12 +12,12 @@ BLANK_DOCTOR_LIST = [
     "สุประวีณ์",
     "กุลพักตร์",
     "พัชรพร",
-    "ภณิตา"
+    "ฤชุกร"
 ]
 
 DOCTOR_DATA = {
     "ธนัท": {
-        "weekday": {"ER": 3, "ward": 3},
+        "weekday": {"ER": 4, "ward": 3},
         "weekend": {"ER": 2, "ward": 2},
     },
     "กุลประวีณ์": {
@@ -25,7 +25,7 @@ DOCTOR_DATA = {
         "weekend": {"ER": 2, "ward": 2}
     },
     "สุประวีณ์": {
-        "weekday": {"ER": 3, "ward": 3},
+        "weekday": {"ER": 3, "ward": 4},
         "weekend": {"ER": 2, "ward": 2},
     },
     "กุลพักตร์": {
@@ -44,25 +44,50 @@ DOCTOR_DATA = {
 
 DOCTOR_AUTOPSY_DATA = {
     "ธนัท": [
-        (datetime.date(2026, 4, 17), SHIFT_TIMES["EVENING"]),
+        (datetime.date(2026, 5, 4), SHIFT_TIMES["NIGHT"]),
+        (datetime.date(2026, 5, 21), SHIFT_TIMES["EVENING"]),
+        (datetime.date(2026, 5, 26), SHIFT_TIMES["DAY"]),
+        (datetime.date(2026, 5, 26), SHIFT_TIMES["EVENING"]),
+        (datetime.date(2026, 5, 26), SHIFT_TIMES["NIGHT"]),
+        (datetime.date(2026, 5, 30), SHIFT_TIMES["DAY"]),
+        (datetime.date(2026, 5, 30), SHIFT_TIMES["EVENING"]),
+        (datetime.date(2026, 5, 30), SHIFT_TIMES["NIGHT"]),
+        (datetime.date(2026, 5, 31), SHIFT_TIMES["DAY"]),
+        (datetime.date(2026, 5, 31), SHIFT_TIMES["EVENING"]),
+        (datetime.date(2026, 5, 31), SHIFT_TIMES["NIGHT"]),
     ],
     "กุลประวีณ์": [
-        (datetime.date(2026, 4, 3), SHIFT_TIMES["EVENING"]),
-        (datetime.date(2026, 4, 22), SHIFT_TIMES["NIGHT"]),
-        (datetime.date(2026, 4, 24), SHIFT_TIMES["DAY"]),
+        (datetime.date(2026, 5, 24), SHIFT_TIMES["DAY"]),
+        (datetime.date(2026, 5, 24), SHIFT_TIMES["EVENING"]),
+        (datetime.date(2026, 5, 24), SHIFT_TIMES["NIGHT"]),
+        (datetime.date(2026, 5, 29), SHIFT_TIMES["DAY"]),
+        (datetime.date(2026, 5, 29), SHIFT_TIMES["EVENING"]),
+        (datetime.date(2026, 5, 29), SHIFT_TIMES["NIGHT"]),
     ],
     "สุประวีณ์": [
-        (datetime.date(2026, 4, 9), SHIFT_TIMES["EVENING"]),
-        (datetime.date(2026, 4, 13), SHIFT_TIMES["NIGHT"]),
+        (datetime.date(2026, 5, 27), SHIFT_TIMES["DAY"]),
+        (datetime.date(2026, 5, 27), SHIFT_TIMES["EVENING"]),
+        (datetime.date(2026, 5, 27), SHIFT_TIMES["NIGHT"]),
     ],
     "กุลพักตร์": [
+        (datetime.date(2026, 5, 10), SHIFT_TIMES["DAY"]),
+        (datetime.date(2026, 5, 20), SHIFT_TIMES["DAY"]),
     ],
     "พัชรพร": [
-        (datetime.date(2026, 4, 8), SHIFT_TIMES["DAY"]),
-        (datetime.date(2026, 4, 28), SHIFT_TIMES["DAY"]),
+        (datetime.date(2026, 5, 25), SHIFT_TIMES["DAY"]),
+        (datetime.date(2026, 5, 25), SHIFT_TIMES["EVENING"]),
+        (datetime.date(2026, 5, 25), SHIFT_TIMES["NIGHT"]),
+        (datetime.date(2026, 5, 28), SHIFT_TIMES["DAY"]),
+        (datetime.date(2026, 5, 28), SHIFT_TIMES["EVENING"]),
+        (datetime.date(2026, 5, 28), SHIFT_TIMES["NIGHT"]),
+        (datetime.date(2026, 5, 30), SHIFT_TIMES["DAY"]),
+        (datetime.date(2026, 5, 30), SHIFT_TIMES["EVENING"]),
+        (datetime.date(2026, 5, 30), SHIFT_TIMES["NIGHT"]),
     ],
     "ฤชุกร": [
-        (datetime.date(2026, 4, 28), SHIFT_TIMES["EVENING"]),
+        (datetime.date(2026, 5, 31), SHIFT_TIMES["DAY"]),
+        (datetime.date(2026, 5, 31), SHIFT_TIMES["EVENING"]),
+        (datetime.date(2026, 5, 31), SHIFT_TIMES["NIGHT"]),
     ]
 }
 
@@ -87,6 +112,7 @@ THAI_HOLIDAYS = [
 
     # --- May 2026 ---
     datetime.date(2026, 5, 4),   # Coronation Day
+    datetime.date(2026, 5, 13),   # Royal Ploughing Ceremony
     # datetime.date(2026, 5, 31),  # Visakha Bucha Day
 ]
 
